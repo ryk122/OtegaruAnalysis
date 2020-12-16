@@ -36,6 +36,28 @@ namespace OtegaruAnalysis
             OpenFile();
         }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (analysisdatas != null)
+            {
+                textBox1.Text = "Exporting csv.";
+
+                string csv = ",android,ios,sum\r\n";
+
+                for (int i = 0; i < analysisdatas.Length; i++)
+                {
+                    csv += analysisdatas[i].ToString() + "\r\n";
+                }
+
+                ExportFile(csv);
+                textBox1.Text += "\r\n done.\r\n";
+            }
+            else
+            {
+                textBox1.Text = "Load Json!";
+            }
+        }
+
         private void OpenFile()
         {
             DialogResult dr = openFileDialog1.ShowDialog();
@@ -102,9 +124,9 @@ namespace OtegaruAnalysis
             }
         }
 
-        private void ExportFile()
+        private void ExportFile(string str)
         {
-            File.WriteAllText(@"C:\Users\ryk\Desktop\test.txt", "Good morning!");
+            File.WriteAllText(@"C:\Users\ryk\Desktop\test.csv", str);
         }
 
         // UNIXエポックを表すDateTimeオブジェクトを取得
