@@ -90,5 +90,37 @@ namespace OtegaruAnalysis
         public string os { get; set; }
     }
 
+    public class AnalysisData
+    {
+        int day;
+        int android, ios, sumcoin;
 
+        public void Analysis(int d)
+        {
+            day = d;
+            android = 0;
+            ios = 0;
+            sumcoin = 0;
+        }
+
+        public void AddAndroidCount()
+        {
+            android++;
+        }
+
+        public void AddiOSCount()
+        {
+            ios++;
+        }
+
+        public void AddCoin(int c)
+        {
+            sumcoin += c;
+        }
+
+        public int GetAverageCoin()
+        {
+            return sumcoin / (android + ios);
+        }
+    }
 }
