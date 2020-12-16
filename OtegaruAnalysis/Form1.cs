@@ -17,6 +17,7 @@ namespace OtegaruAnalysis
     public partial class Form1 : Form
     {
         private string jsonfile;
+        private AnalysisData[] analysisdatas;
 
         public Form1()
         {
@@ -28,6 +29,11 @@ namespace OtegaruAnalysis
         {
             LoadJson();
             label1.Text = GetUnixTime(DateTime.Now).ToString();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            OpenFile();
         }
 
         private void OpenFile()
@@ -52,9 +58,48 @@ namespace OtegaruAnalysis
             //string FilePath = @"C:\Users\ryk\Desktop\get_active_logs.json"; //ファイルパス
             string FilePath = jsonfile; //ファイルパス
             var json = File.ReadAllText(FilePath); // ファイル内容をjson変数に格納
-            List<OtegaruData> data = JsonSerializer.Deserialize<List<OtegaruData>>(json);
+            List<OtegaruData> datas = JsonSerializer.Deserialize<List<OtegaruData>>(json);
 
-            textBox1.Text += data.Count().ToString();
+            AnalyzeJson(datas);
+        }
+
+        private void AnalyzeJson(List<OtegaruData> datas)
+        {
+            analysisdatas = new AnalysisData[31];
+
+            for (int i = 0; i < analysisdatas.Length; i++)
+            {
+                analysisdatas[i] = new AnalysisData(i);
+            }
+
+            textBox1.Text += "There are " + datas.Count().ToString() + "datas.\r\n";
+
+            foreach (OtegaruData d in datas)
+            {
+                DateTime t = DateTimeOffset.FromUnixTimeSeconds(d.created_at/1000).LocalDateTime;
+                //textBox1.Text += " " + t.Day;
+                int day = t.Day;
+
+                if (d.os.Equals("android"))
+                {
+                    analysisdatas[day].AddAndroidCount();
+                }
+                else if (d.os.Equals("ios"))
+                {
+                    analysisdatas[day].AddiOSCount();
+                }
+                else
+                {
+                    analysisdatas[day].AddUnknownCount();
+                }
+
+                analysisdatas[day].AddCoin(d.coin);
+            }
+
+            for(int i=0; i<analysisdatas.Length; i++)
+            {
+                textBox1.Text += analysisdatas[i].ToString() + "\r\n";
+            }
         }
 
         private void ExportFile()
@@ -76,30 +121,26 @@ namespace OtegaruAnalysis
             // 経過秒数に変換
             return (long)elapsedTime.TotalSeconds;
         }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            OpenFile();
-        }
     }
 
     public class OtegaruData
     {
         public int coin { get; set; }
-        public float created_at { get; set; }
+        public long created_at { get; set; }
         public string os { get; set; }
     }
 
     public class AnalysisData
     {
         int day;
-        int android, ios, sumcoin;
+        int android, ios, unknown, sumcoin;
 
-        public void Analysis(int d)
+        public AnalysisData(int d)
         {
             day = d;
             android = 0;
             ios = 0;
+            unknown = 0;
             sumcoin = 0;
         }
 
@@ -113,6 +154,11 @@ namespace OtegaruAnalysis
             ios++;
         }
 
+        public void AddUnknownCount()
+        {
+            unknown++;
+        }
+
         public void AddCoin(int c)
         {
             sumcoin += c;
@@ -121,6 +167,11 @@ namespace OtegaruAnalysis
         public int GetAverageCoin()
         {
             return sumcoin / (android + ios);
+        }
+
+        public override string ToString()
+        {
+            return day.ToString() + "," + android.ToString() + "," + ios.ToString() + "," + (android + ios).ToString();
         }
     }
 }
