@@ -41,7 +41,7 @@ namespace OtegaruAnalysis
             {
                 textBox1.Text = "Exporting csv.";
 
-                string csv = ",android,ios,sum\r\n";
+                string csv = ",android,ios,sum,new(android),new(ios)\r\n";
 
                 for (int i = 0; i < analysisdatas.Length; i++)
                 {
@@ -104,10 +104,12 @@ namespace OtegaruAnalysis
                 if (d.os.Equals("android"))
                 {
                     analysisdatas[day].AddAndroidCount();
+                    if (d.coin == 1050) analysisdatas[day].AddNewAndroid();
                 }
                 else if (d.os.Equals("ios"))
                 {
                     analysisdatas[day].AddiOSCount();
+                    if (d.coin == 1050) analysisdatas[day].AddNewiOS();
                 }
                 else
                 {
@@ -154,7 +156,7 @@ namespace OtegaruAnalysis
     public class AnalysisData
     {
         int day;
-        int android, ios, unknown, sumcoin;
+        int android, ios, unknown, sumcoin, newandroid, newios;
 
         public AnalysisData(int d)
         {
@@ -163,6 +165,8 @@ namespace OtegaruAnalysis
             ios = 0;
             unknown = 0;
             sumcoin = 0;
+            newandroid = 0;
+            newios = 0;
         }
 
         public void AddAndroidCount()
@@ -173,6 +177,16 @@ namespace OtegaruAnalysis
         public void AddiOSCount()
         {
             ios++;
+        }
+
+        public void AddNewAndroid()
+        {
+            newandroid++;
+        }
+
+        public void AddNewiOS()
+        {
+            newios++;
         }
 
         public void AddUnknownCount()
@@ -192,7 +206,9 @@ namespace OtegaruAnalysis
 
         public override string ToString()
         {
-            return day.ToString() + "," + android.ToString() + "," + ios.ToString() + "," + (android + ios).ToString();
+            return day.ToString() + "," + android.ToString() +
+                "," + ios.ToString() + "," + (android + ios).ToString() +
+                "," + newandroid.ToString() + "," + newios.ToString();
         }
     }
 }
