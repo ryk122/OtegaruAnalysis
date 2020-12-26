@@ -28,7 +28,6 @@ namespace OtegaruAnalysis
         private void button1_Click(object sender, EventArgs e)
         {
             LoadJson();
-            label1.Text = GetUnixTime(DateTime.Now).ToString();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -87,7 +86,7 @@ namespace OtegaruAnalysis
 
         private void AnalyzeJson(List<OtegaruData> datas)
         {
-            analysisdatas = new AnalysisData[31];
+            analysisdatas = new AnalysisData[32];
 
             for (int i = 0; i < analysisdatas.Length; i++)
             {
